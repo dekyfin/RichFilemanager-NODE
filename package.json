@@ -1,6 +1,6 @@
 {
   "name": "rich-filemanager-node",
-  "version": "0.1.2",
+  "version": "0.1.4",
   "description": "A nodejs connector for RichFilemanager",
   "main": "index.js",
   "scripts": {
