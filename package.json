@@ -1,0 +1,30 @@
+{
+  "name": "rich-filemanager-node",
+  "version": "0.1.0",
+  "description": "A node connector for RichFilemanager",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/dekyfin/RichFilemanager-NODE.git"
+  },
+  "keywords": [
+    "RichFilemanager",
+    "Nodejs",
+    "connector",
+    "filemanager"
+  ],
+  "author": "Desmond Kyeremeh <d.kyeremeh@dekyfin.com>",
+  "dependencies": {
+    "express": "^4.15.2",
+    "multer": "^1.3.0",
+    "path-posix": "^1.0.0"
+  },
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/dekyfin/RichFilemanager-NODE/issues"
+  },
+  "homepage": "https://github.com/dekyfin/RichFilemanager-NODE#readme"
+}
