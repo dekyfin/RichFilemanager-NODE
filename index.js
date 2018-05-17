@@ -16,14 +16,14 @@ const multer = require('multer');
 paths.posix = require('path-posix');
 
 const router = express.Router(); // eslint-disable-line
-const upload = multer({dest: 'public/'});
+const upload = multer({ dest: 'public/' });
 
 module.exports = (__appRoot, configPath) => { // eslint-disable-line max-statements
 	//Init config
-	if ( typeof( configPath ) == "string" ) {
+	if (typeof (configPath) == "string") {
 		config = require(configPath);
 	}
-	else if( typeof( configPath ) == "object"  ){
+	else if (typeof (configPath) == "object") {
 		config = configPath;
 	}
 
@@ -35,18 +35,18 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 		switch (mode.trim()) {
 			case 'initiate':
 				respond(res, {
-                    data: {
-                        id: "/",
-                        type: mode ,
-                        attributes: {
-                            config: {
-                                security: config.security,
-                                upload: config.upload
-                            }
-                        }
-                    }
+					data: {
+						id: "/",
+						type: mode,
+						attributes: {
+							config: {
+								security: config.security,
+								upload: config.upload
+							}
+						}
+					}
 				});
-			break;
+				break;
 			case 'getinfo':
 				parsePath(path, (pp) => {
 					getinfo(pp, (result) => {
@@ -55,7 +55,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // getinfo
 				}); // parsePath
-			break;
+				break;
 			case 'readfolder':
 				parsePath(path, (pp) => {
 					readfolder(pp, (result) => {
@@ -64,17 +64,17 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // readfolder
 				}); // parsePath
-			break;
+				break;
 			case 'getimage':
 				parsePath(path, (pp) => {
 					res.sendFile(paths.resolve(pp.osFullPath));
 				}); // parsePath
-			break;
+				break;
 			case 'readfile':
 				parsePath(path, (pp) => {
 					res.sendFile(paths.resolve(pp.osFullPath));
 				}); // parsePath
-			break;
+				break;
 			case 'download':
 				parsePath(path, (pp) => {
 					res.setHeader('content-type', 'text/html; charset=UTF-8');
@@ -82,7 +82,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 					res.setHeader('content-disposition', 'attachment; filename="' + pp.filename + '"');
 					res.sendFile(paths.resolve(pp.osFullPath));
 				}); // parsePath
-			break;
+				break;
 			case 'addfolder':
 				parsePath(path, (pp) => {
 					addfolder(pp, req.query.name, (result) => {
@@ -91,7 +91,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // addfolder
 				}); // parsePath
-			break;
+				break;
 			case 'delete':
 				parsePath(path, (pp) => {
 					deleteItem(pp, (result) => {
@@ -100,7 +100,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // parsePath
 				}); // parsePath
-			break;
+				break;
 			case 'rename':
 				parsePath(req.query.old, (opp) => {
 					const newPath = paths.posix.parse(opp.uiPath)
@@ -115,7 +115,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						}); // rename
 					}); // parseNewPath
 				}); // parsePath
-			break;
+				break;
 			case 'move':
 				parsePath(req.query.old, (opp) => {
 					parseNewPath(paths.posix.join('/', req.query.new, opp.filename), (npp) => {
@@ -126,7 +126,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						}); // rename
 					}); // parseNewPath
 				}); // parsePath
-			break;
+				break;
 			case 'copy':
 				parsePath(req.query.source, (opp) => {
 					parseNewPath(paths.posix.join('/', req.query.target, opp.filename), (npp) => {
@@ -137,7 +137,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						}); // rename
 					}); // parseNewPath
 				}); // parsePath
-			break;
+				break;
 			default:
 				// eslint-disable-next-line no-console
 				console.log('no matching GET route found with mode: \'', mode.trim(), '\' query -> ', req.query);
@@ -150,7 +150,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 	router.post('/', upload.array('files', config.upload.maxNumberOfFiles), (req, res) => {
 		const mode = req.body.mode;
 		const path = req.body.path;
-		console.log( req.body );
+		console.log(req.body);
 		switch (mode.trim()) {
 			case 'upload':
 				parsePath(req.body.path, (pp) => {
@@ -160,7 +160,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // savefiles
 				}); // parsePath
-			break;
+				break;
 			case 'savefile':
 				parsePath(path, (pp) => {
 					getinfo(pp, (result) => {
@@ -182,7 +182,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 						});
 					}); // getinfo
 				}); // parsePath
-			break;
+				break;
 			default:
 				// eslint-disable-next-line no-console
 				console.log("no matching POST route found with mode: '", mode.trim(), '\' query -> ', req.query);
@@ -310,7 +310,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 		parsePath(paths.posix.join(pp.uiPath, files[$index]), (ipp) => {
 			getinfo(ipp, (result) => {
 				loopInfo.results.push(result);
-				if ($index + 1 >= loopInfo.total) {
+				if (loopInfo.results.length === loopInfo.total) {
 					callback(loopInfo.results);
 				} // if
 			}); // getinfo
@@ -420,7 +420,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 					},
 				};
 				loopInfo.results.push(result);
-				if ($index + 1 >= loopInfo.total) {
+				if (loopInfo.results.length === loopInfo.total) {
 					callback(loopInfo.results);
 				}
 			}); // fs.rename
@@ -433,7 +433,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			total: files.length,
 			error: false,
 		};
-		
+
 		console.log(files, files.length)
 
 		for (let i = 0; i < loopInfo.total; i++) {
