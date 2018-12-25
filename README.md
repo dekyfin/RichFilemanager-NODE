@@ -9,7 +9,7 @@ npm install rich-filemanager-node --save
 ## Usage
 This connector is implemented as a middleware for Expressjs. The code sample is an express app that implements the connector
 
-```JAVASCRIPT
+```javascript
 const express = require( "express" );
 const filemanager = require( "rich-filemanager-node" );
 const config = "/path/to/filemanager.config.json";	//Change this to the actual location of your config file
@@ -31,8 +31,24 @@ Note: `config` can be an object or a file path
 ## Important
 When using this connector in your project, the filemanager route must come before any body-parsing ( multer, body-parser, busboy, etc ) routes;
 
+## Demo Project
+This project includes a demo to help you setup your project.
+
+Follow these steps to set up the demo
+
+
+1. Clone this repo:
+
+	`git clone https://github.com/dekyfin/RichFilemanager-NODE.git fileman`
+	
+	You can alternatively download the repo and unzip it into a folder called `fileman`
+2. Enter the project directory: `cd fileman`
+3. Install all dependencies: `npm install`
+4. Start the demo:  `npm run demo`
+
+
 
 ## API functions not yet implemented
 1. seekfolder
-1. summarize
-1. extract
+2. summarize
+3. extract
