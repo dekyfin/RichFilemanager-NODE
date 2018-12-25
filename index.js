@@ -311,7 +311,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 		parsePath(paths.posix.join(pp.uiPath, files[$index]), (ipp) => {
 			getinfo(ipp, (result) => {
 				loopInfo.results.push(result);
-				if ($index + 1 >= loopInfo.total) {
+				if (loopInfo.results.length === loopInfo.total) {
 					callback(loopInfo.results);
 				} // if
 			}); // getinfo
@@ -422,7 +422,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 					},
 				};
 				loopInfo.results.push(result);
-				if ($index + 1 >= loopInfo.total) {
+				if (loopInfo.results.length === loopInfo.total) {
 					callback(loopInfo.results);
 				}
 			}); // fs.rename
