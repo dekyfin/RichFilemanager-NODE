@@ -1,3 +1,4 @@
+"use strict";
 /**
  * Created by Joshua.Austill on 8/11/2016.
  * Modified by Desmond Kyeremeh
@@ -29,7 +30,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 
 	// finally, our main route handling that calls the above functions :)
 	router.get('/', (req, res) => { // eslint-disable-line complexity
-		const mode = req.query.mode;
+		const mode = req.query.mode || "";
 		const path = req.query.path;
 
 		switch (mode.trim()) {
@@ -140,17 +141,14 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			break;
 			default:
 				// eslint-disable-next-line no-console
-				console.log('no matching GET route found with mode: \'', mode.trim(), '\' query -> ', req.query);
-				respond(res, {
-					Code: 0
-				});
+				res.status(404).send('no matching GET route found with mode: \'', mode.trim(), '\'');
 		} // switch
 	}); // get
 
 	router.post('/', upload.array('files', config.upload.maxNumberOfFiles), (req, res) => {
-		const mode = req.body.mode;
+		const mode = req.body.mode || "";
 		const path = req.body.path;
-		console.log( req.body );
+
 		switch (mode.trim()) {
 			case 'upload':
 				parsePath(req.body.path, (pp) => {
@@ -318,6 +316,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 	} // getIndividualFileInfo
 
 	function readfolder(pp, callback) {
+		
 		fs.readdir(pp.osFullPath, (err, files) => {
 			if (err) {
 				console.log('err -> ', err); // eslint-disable-line no-console
