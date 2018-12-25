@@ -11,7 +11,7 @@ TODO: API functions to integrate
 */
 var config;
 const express = require('express');
-const fs = require('fs');
+const fs = require('fs-extra');
 const paths = require('path');
 const multer = require('multer');
 paths.posix = require('path-posix');
@@ -27,6 +27,9 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 	else if( typeof( configPath ) == "object"  ){
 		config = configPath;
 	}
+
+	// Create __appRoot if it doesn't exist
+	fs.mkdirp(__appRoot);
 
 	// finally, our main route handling that calls the above functions :)
 	router.get('/', (req, res) => { // eslint-disable-line complexity
