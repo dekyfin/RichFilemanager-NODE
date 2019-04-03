@@ -12,6 +12,7 @@ TODO: API functions to integrate
 var config;
 const express = require('express');
 const fs = require('fs-extra');
+const mv = require('mv');
 const paths = require('path');
 const multer = require('multer');
 paths.posix = require('path-posix');
@@ -21,10 +22,10 @@ const upload = multer({dest: 'public/'});
 
 module.exports = (__appRoot, configPath) => { // eslint-disable-line max-statements
 	//Init config
-	if ( typeof( configPath ) == "string" ) {
+	if ( typeof( configPath ) === "string" ) {
 		config = require(configPath);
 	}
-	else if( typeof( configPath ) == "object"  ){
+	else if( typeof( configPath ) === "object"  ){
 		config = configPath;
 	}
 
@@ -399,7 +400,8 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 				pp.isDirectory ? files[$index].originalname : pp.filename
 			); // not sure if this is the best way to handle this or not
 
-			fs.rename(oldfilename, newfilename, (err) => {
+			// Use MV since fs.rename won't work across filesystems
+			mv(oldfilename, newfilename, (err) => {
 				if (err) {
 					loopInfo.error = true;
 					console.log('savefiles error -> ', err); // eslint-disable-line no-console
