@@ -33,13 +33,15 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 	fs.mkdirp(__appRoot);
 
 	// finally, our main route handling that calls the above functions :)
-	router.get('/', (req, res) => { // eslint-disable-line complexity
+	router.get('/', (req, res, next) => { // eslint-disable-line complexity
 		const mode = req.query.mode || "";
 		const path = req.query.path;
+		const respond = (obj) => nextWith(req, next, obj);
+//		const respond = (obj) => respondWith(res, obj);
 
 		switch (mode.trim()) {
 			case 'initiate':
-				respond(res, {
+				respond({
                     data: {
                         id: "/",
                         type: mode ,
@@ -55,7 +57,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			case 'getinfo':
 				parsePath(path, (pp) => {
 					getinfo(pp, (result) => {
-						respond(res, {
+						respond({
 							data: result
 						});
 					}); // getinfo
@@ -64,7 +66,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			case 'readfolder':
 				parsePath(path, (pp) => {
 					readfolder(pp, (result) => {
-						respond(res, {
+						respond({
 							data: result
 						});
 					}); // readfolder
@@ -91,7 +93,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			case 'addfolder':
 				parsePath(path, (pp) => {
 					addfolder(pp, req.query.name, (result) => {
-						respond(res, {
+						respond({
 							data: result
 						});
 					}); // addfolder
@@ -100,7 +102,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			case 'delete':
 				parsePath(path, (pp) => {
 					deleteItem(pp, (result) => {
-						respond(res, {
+						respond({
 							data: result
 						});
 					}); // parsePath
@@ -114,7 +116,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 
 					parseNewPath(newish, (npp) => {
 						rename(opp, npp, (result) => {
-							respond(res, {
+							respond({
 								data: result
 							});
 						}); // rename
@@ -125,7 +127,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 				parsePath(req.query.old, (opp) => {
 					parseNewPath(paths.posix.join('/', req.query.new, opp.filename), (npp) => {
 						rename(opp, npp, (result) => {
-							respond(res, {
+							respond({
 								data: result
 							});
 						}); // rename
@@ -136,7 +138,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 				parsePath(req.query.source, (opp) => {
 					parseNewPath(paths.posix.join('/', req.query.target, opp.filename), (npp) => {
 						copy(opp, npp, (result) => {
-							respond(res, {
+							respond({
 								data: result
 							});
 						}); // rename
@@ -145,19 +147,28 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			break;
 			default:
 				// eslint-disable-next-line no-console
-				res.status(404).send('no matching GET route found with mode: \'', mode.trim(), '\'');
+				res.status(404).send('no matching GET route found with mode: \'' + mode.trim() + '\'');
 		} // switch
 	}); // get
 
-	router.post('/', upload.array('files', config.upload.maxNumberOfFiles), (req, res) => {
+	const ensureRequestBody = function(req, res, next){
+		if (req.body) {
+			next()
+		} else {
+			upload.array('files', config.upload.maxNumberOfFiles)(req, res, (err) => next(err))
+		}
+	}
+
+	router.post('/', ensureRequestBody, (req, res, next) => {
 		const mode = req.body.mode || "";
 		const path = req.body.path;
+		const respond = (obj) => nextWith(req, next, obj);
 
 		switch (mode.trim()) {
 			case 'upload':
 				parsePath(req.body.path, (pp) => {
 					savefiles(pp, req.files, (result) => {
-						respond(res, {
+						respond({
 							data: result
 						});
 					}); // savefiles
@@ -177,7 +188,7 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 										.send(err);
 								}
 								result.attributes.content = f.toString();
-								respond(res, {
+								respond({
 									data: result
 								});
 							});
@@ -188,13 +199,11 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 			default:
 				// eslint-disable-next-line no-console
 				console.log("no matching POST route found with mode: '", mode.trim(), '\' query -> ', req.query);
-				respond(res, {
+				respond({
 					Code: 0
 				});
 		} // switch
 	}); // post
-
-
 
 	// We will handle errors consistently by using a function that returns an error object
 	function errors(err) {
@@ -505,9 +514,14 @@ module.exports = (__appRoot, configPath) => { // eslint-disable-line max-stateme
 
 	// RichFilemanager expects a pretified string and not a json object, so this will do that
 	// This results in numbers getting recieved as 0 instead of '0'
-	function respond(res, obj) {
+	function respondWith(res, obj) {
 		res.setHeader('Content-Type', 'application/json');
 		res.send(JSON.stringify(obj));
+	} // respond
+
+	function nextWith(req, next, obj) {
+		req.rfmNodeData = obj;
+		next();
 	} // respond
 
 	return router;
